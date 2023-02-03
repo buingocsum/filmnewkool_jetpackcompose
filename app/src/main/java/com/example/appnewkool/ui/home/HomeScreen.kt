@@ -7,13 +7,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun HomeScreen() {
-
+    Card(modifier = Modifier.padding(8.dp),
+        shape = RoundedCornerShape(8.dp), elevation = 1.dp) {
+        Text(text = "Summer", modifier = Modifier.fillMaxSize())
+    }
 }
 
 @Preview

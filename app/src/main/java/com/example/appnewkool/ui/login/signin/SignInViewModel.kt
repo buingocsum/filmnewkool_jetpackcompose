@@ -33,12 +33,7 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
     fun signIn(userName: Account){
         parentJob = viewModelScope.launch(handler) {
             val resultSignIn = signInRepository.signIn(userName)
-
-
-
             _signIn.postValue(resultSignIn)
         }
     }
-
-
 }

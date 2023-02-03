@@ -1,6 +1,5 @@
 package com.example.appnewkool.data.modeljson
 
-import com.example.appnewkool.data.database.entities.ProductEntity
 import com.example.appnewkool.data.model.Product
 
 fun ProductResponse.toProduct(): Product {
