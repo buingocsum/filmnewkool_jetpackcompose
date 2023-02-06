@@ -19,8 +19,13 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
 
 
     private var _signIn = MutableLiveData<SignInResponse>()
+
     val signIn: LiveData<SignInResponse>
     get() = _signIn
+
+    init {
+        fetchData()
+    }
 
     override fun fetchData() {
 //        showLoading(true)
@@ -35,5 +40,6 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
             val resultSignIn = signInRepository.signIn(userName)
             _signIn.postValue(resultSignIn)
         }
+
     }
 }

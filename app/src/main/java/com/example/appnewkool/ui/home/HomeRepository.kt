@@ -2,7 +2,6 @@ package com.example.appnewkool.ui.home
 
 import com.example.appnewkool.data.base.network.NetworkResult
 import com.example.appnewkool.data.database.entities.toListProduct
-import com.example.appnewkool.data.database.entities.toListProductEntity
 import com.example.appnewkool.data.model.Product
 import com.example.appnewkool.data.modeljson.toListProduct
 import com.example.appnewkool.data.services.LocalService
@@ -34,7 +33,7 @@ class HomeRepository @Inject constructor(private val localService: LocalService,
 
         if(newProductList.isNotEmpty()){
             localService.deleteAllProduct()
-            localService.saveListProduct(newProductList.toListProductEntity())
+//            localService.saveListProduct(newProductList.toListProductEntity())
         }
         return newProductList
     }

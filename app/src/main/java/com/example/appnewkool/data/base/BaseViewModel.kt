@@ -1,7 +1,6 @@
 package com.example.appnewkool.data.base
 
 import android.accounts.NetworkErrorException
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.appnewkool.common.Event

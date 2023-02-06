@@ -9,4 +9,10 @@ open class TextFieldState(
     private val errorMessage: (String)-> String
 ) {
     var text by mutableStateOf("")
+    var error by mutableStateOf<String?>(null)
+    fun validate(){
+        error = if(validator(text)) null else errorMessage(text)
+    }
+
+    fun isValid()=validator(text)
 }

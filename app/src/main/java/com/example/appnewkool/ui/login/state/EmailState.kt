@@ -1,6 +1,9 @@
 package com.example.appnewkool.ui.login.state
 
+import android.util.Log
 import java.util.regex.Pattern
+
+
 
 class EmailState : TextFieldState(
     validator = ::isEmailValid,
