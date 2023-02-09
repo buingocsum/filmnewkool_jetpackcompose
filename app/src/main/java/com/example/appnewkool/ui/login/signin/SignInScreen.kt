@@ -10,8 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -26,30 +25,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.appnewkool.R
 import com.example.appnewkool.data.model.Account
-import com.example.appnewkool.ui.login.state.EmailState
-import com.example.appnewkool.ui.login.state.PasswordState
+import com.example.appnewkool.ui.theme.AppNewkoolTheme
 import com.example.appnewkool.ui.theme.BlueWhite
 import com.example.appnewkool.ui.theme.WhiteBlue
 import com.example.appnewkool.ui.theme.WhiteBlue2
 
 @Composable
 fun SignInScreen(
-    viewModel: SignInViewModel = hiltViewModel(),
-    navToHome: ()-> Unit
+    viewModel: SignInViewModel? = hiltViewModel(),
+    navToHome: () -> Unit
 ) {
-    val emailState = remember { EmailState() }
-    val passwordState = remember { PasswordState() }
+    val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
-//    val token = viewModel.signIn.observeAsState().value?.token?.token
-    var token by remember {
-        mutableStateOf("")
+    if (viewModel?.signInResult?.token?.token != null){
+        navToHome.invoke()
     }
-    token = viewModel.signIn.observeAsState().value?.token?.token.toString()
 
     Box(
         modifier = Modifier
@@ -66,7 +62,7 @@ fun SignInScreen(
                 .absoluteOffset(x = -65.dp, y = -320.dp)
                 .size(400.dp)
         )
-        Row() {
+        Row {
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
@@ -83,14 +79,12 @@ fun SignInScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                EmailInput(emailState.text, emailState.error) {
-                    emailState.text = it
-                    emailState.validate()
+                EmailInput(email = inputUserState.email, error = inputUserState.emailErrorMessage) {
+                    viewModel?.onEmailInputChange(it)
                 }
                 Spacer(modifier = Modifier.height(30.dp))
-                PasswordInput(passwordState.text, passwordState.error) {
-                    passwordState.text = it
-                    passwordState.validate()
+                PasswordInput(inputUserState.passWord, inputUserState.passwWordErrorMessage) {
+                    viewModel?.onPasswordInputChange(it)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -115,23 +109,27 @@ fun SignInScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
-                BtnSignIn(
-                    emailState.text,
-                    passwordState.text,
-                    token,
-                    {
-                        navToHome.invoke()
-                    },
-                    enable = emailState.isValid() && passwordState.isValid()
-                ) {
-                    viewModel.signIn(it)
+                if(viewModel?.isLoading?.value == false){
+                    BtnSignIn(
+                        inputUserState.email,
+                        inputUserState.passWord,
+                        enable = {
+                            inputUserState.emailErrorMessage == null && inputUserState.passwWordErrorMessage == null
+                        },
+                    ) {
+                        viewModel?.signIn(it)
+                    }
+                } else {
+                    CircularProgressIndicator(color = Color.White)
                 }
+
                 Spacer(modifier = Modifier.weight(1f))
             }
+
             Spacer(modifier = Modifier.weight(1f))
         }
-    }
 
+    }
 }
 
 
@@ -153,9 +151,7 @@ fun DrawArc(modifier: Modifier) {
 fun BtnSignIn(
     email: String,
     password: String,
-    token: String?,
-    changeScreen: () -> Unit,
-    enable: Boolean,
+    enable: () -> Boolean,
     onClick: (Account) -> Unit,
 ) {
     Button(
@@ -163,13 +159,12 @@ fun BtnSignIn(
             if (email != "" && password != "") {
                 onClick(Account(email, password))
             }
-            if (token != null) changeScreen.invoke()
         }, shape = CircleShape, modifier = Modifier.size(70.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = WhiteBlue2,
             disabledBackgroundColor = BlueWhite
         ),
-        enabled = enable
+        enabled = enable.invoke()
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_forward_ios_24),
@@ -198,7 +193,7 @@ fun EmailInput(email: String, error: String?, onEmailChange: (String) -> Unit) {
                 errorLabelColor = MaterialTheme.colors.error,
                 focusedLabelColor = Color.White,
                 leadingIconColor = Color.White,
-                errorLeadingIconColor = MaterialTheme.colors.error
+//                errorLeadingIconColor = MaterialTheme.colors.error
             ),
             shape = RoundedCornerShape(40.dp),
             leadingIcon = {
@@ -242,7 +237,7 @@ fun PasswordInput(password: String, error: String?, onPasswordChange: (String) -
                 errorLabelColor = MaterialTheme.colors.error,
                 focusedLabelColor = Color.White,
                 leadingIconColor = Color.White,
-                errorLeadingIconColor = MaterialTheme.colors.error
+//                errorLeadingIconColor = MaterialTheme.colors.error
             ),
             shape = RoundedCornerShape(40.dp),
             leadingIcon = {
@@ -250,7 +245,6 @@ fun PasswordInput(password: String, error: String?, onPasswordChange: (String) -
                     Spacer(modifier = Modifier.width(20.dp))
                     Icon(
                         imageVector = Icons.Rounded.Lock,
-//                        ImageVector.vectorResource(id = R.drawable.ic_baseline_lock_24),
                         contentDescription = "iconEmail",
                         modifier = Modifier.size(30.dp),
                     )
@@ -281,4 +275,12 @@ fun IsErrorField(error: String) {
     )
 }
 
+@Preview(showSystemUi = true)
+@Composable
+fun PrevLoginScreen() {
+    AppNewkoolTheme() {
+        SignInScreen(null) {
+        }
+    }
+}
 

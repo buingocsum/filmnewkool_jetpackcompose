@@ -127,7 +127,9 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 slideOut(targetOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             }
         ) {
-            DetailProductScreen()
+            DetailProductScreen(){
+                navController.navigateUp()
+            }
         }
     }
 }
