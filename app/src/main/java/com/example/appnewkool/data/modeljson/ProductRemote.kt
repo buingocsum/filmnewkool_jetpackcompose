@@ -1,6 +1,6 @@
-package com.example.appnewkool.data.model
+package com.example.appnewkool.data.modeljson
 
-data class Product(
+class ProductRemote(
     val id: Int?,
     val tenXe: String,
     val hangXe: String?,
@@ -12,4 +12,5 @@ data class Product(
     val tamGiac: String?,
     val noc: String?,
     val image: String?,
-)
+) {
+}

@@ -18,27 +18,28 @@ fun ProductEntity.toProduct(): Product {
     )
 }
 
-//fun Product.toProductEntity(): ProductEntity {
-//    return ProductEntity(
-//        id = this.id,
-//        tenXe = this.tenXe,
-//        hangXe = this.hangXe,
-//        kinhLai = this.kinhLai,
-//        suonTruoc = this.suonTruoc,
-//        khoangSau = this.khoangSau,
-//        kinhHau = this.kinhHau,
-//        tamGiac = this.tamGiac,
-//        noc = this.noc,
-//        image = this.image
-//    )
-//}
+fun Product.toProductEntity(): ProductEntity {
+    return ProductEntity(
+        id = this.id,
+        tenXe = this.tenXe,
+        hangXe = this.hangXe,
+        kinhLai = this.kinhLai,
+        suonSau = this.suonSau,
+        suonTruoc = this.suonTruoc,
+        khoangSau = this.khoangSau,
+        kinhHau = this.kinhHau,
+        tamGiac = this.tamGiac,
+        noc = this.noc,
+        image = this.image
+    )
+}
 
 
 fun List<ProductEntity>.toListProduct(): List<Product>{
     return this.map { it.toProduct() }
 }
 
-//fun List<Product>.toListProductEntity(): List<ProductEntity>{
-//    return this.map { it.toProductEntity() }
-//}
+fun List<Product>.toListProductEntity(): List<ProductEntity>{
+    return this.map { it.toProductEntity() }
+}
 

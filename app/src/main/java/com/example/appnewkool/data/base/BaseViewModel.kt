@@ -1,10 +1,10 @@
 package com.example.appnewkool.data.base
 
 import android.accounts.NetworkErrorException
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.appnewkool.common.Event
 import com.example.appnewkool.data.base.network.BaseNetworkException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -18,7 +18,7 @@ open class BaseViewModel : ViewModel() {
     var networkException = mutableStateOf("")
         protected set
 
-    var isLoading = mutableStateOf(false)
+    var isLoading by mutableStateOf(false)
         protected set
 
 //    var onNavigateToPage = MutableLiveData<Event<Int>>()
@@ -41,9 +41,12 @@ open class BaseViewModel : ViewModel() {
     }
 
 
-    protected fun registerJobFinish() {
+    protected fun onJobFinish(vararg doSomeThing:(()->Unit) ) {
         parentJob?.invokeOnCompletion {
-            isLoading.value = false
+            doSomeThing.forEach {
+                it.invoke()
+            }
+            isLoading = false
         }
     }
 

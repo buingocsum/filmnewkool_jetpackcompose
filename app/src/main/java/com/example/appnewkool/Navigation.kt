@@ -6,12 +6,12 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.navigation
+import androidx.navigation.*
 import com.example.appnewkool.ui.home.HomeScreen
 import com.example.appnewkool.ui.login.signin.SignInScreen
+import com.example.appnewkool.ui.product.add.AddProductScreen
 import com.example.appnewkool.ui.product.detail.DetailProductScreen
+import com.example.appnewkool.ui.product.edit.UpdateProductScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -30,7 +30,7 @@ enum class LoginRoutes {
 enum class HomeRoutes {
     Home,
     DetailProduct,
-    EditProduct,
+    UpdateProduct,
     AddProduct,
     RemoveProduct,
 }
@@ -57,7 +57,6 @@ fun NavGraphBuilder.loginGraph(navController: NavHostController) {
     navigation(route = NestedRoutes.Login.name, startDestination = LoginRoutes.SignIn.name) {
         composable(route = LoginRoutes.SignIn.name,
             enterTransition = {
-                // Let's make for a really long fade in
                 slideIn(initialOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             },
             exitTransition = {
@@ -70,7 +69,7 @@ fun NavGraphBuilder.loginGraph(navController: NavHostController) {
                 slideOut(targetOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             }
         ) {
-            SignInScreen(navToHome = {
+            SignInScreen(onNavToHome = {
                 navController.navigate(NestedRoutes.Main.name) {
                     launchSingleTop = true
                     popUpTo(LoginRoutes.SignIn.name) {
@@ -88,7 +87,6 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         composable(
             route = HomeRoutes.Home.name,
             enterTransition = {
-                // Let's make for a really long fade in
                 slideIn(initialOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             },
             exitTransition = {
@@ -103,18 +101,23 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 slideOut(targetOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             }
         ) {
-            HomeScreen() {
-                navController.navigate(HomeRoutes.DetailProduct.name) {
+            HomeScreen(navToAddProDuctSc = {
+                navController.navigate(HomeRoutes.AddProduct.name) {
                     launchSingleTop = true
-                    popUpTo(HomeRoutes.Home.name){
-                        inclusive = true
-                    }
+                }
+            }, navOnBack = { navController.navigateUp() }) {
+                navController.navigate(HomeRoutes.DetailProduct.name + "?id=$it") {
+                    launchSingleTop = true
+
                 }
             }
         }
-        composable(route = HomeRoutes.DetailProduct.name,
+        composable(route = HomeRoutes.DetailProduct.name + "?id={id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+                defaultValue = 0
+            }),
             enterTransition = {
-                // Let's make for a really long fade in
                 slideIn(initialOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             },
             exitTransition = {
@@ -127,7 +130,68 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 slideOut(targetOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
             }
         ) {
-            DetailProductScreen(){
+            DetailProductScreen(
+                productId = it.arguments?.getInt("id")!!,
+                navToUpdateProduct = {
+                    navController.navigate(HomeRoutes.UpdateProduct.name + "?id=$it") {
+                        launchSingleTop = true
+                    }
+                }) {
+                navController.navigateUp()
+            }
+        }
+        composable(route = HomeRoutes.AddProduct.name,
+            enterTransition = {
+                slideIn(initialOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
+            },
+            exitTransition = {
+                slideOut(targetOffset = { IntOffset(-1000, 0) }, animationSpec = tween(duration))
+            },
+            popEnterTransition = {
+                slideIn(initialOffset = { IntOffset(-1000, 0) }, animationSpec = tween(duration))
+            },
+            popExitTransition = {
+                slideOut(targetOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
+            }
+        ) {
+            AddProductScreen(navToHome = {
+                navController.navigate(HomeRoutes.Home.name) {
+                    launchSingleTop = true
+                    popUpTo(HomeRoutes.Home.name) {
+                        inclusive = true
+                    }
+                }
+            }) {
+                navController.navigateUp()
+            }
+        }
+
+        composable(route = HomeRoutes.UpdateProduct.name + "?id={id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+                defaultValue = 0
+            }),
+            enterTransition = {
+                slideIn(initialOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
+            },
+            exitTransition = {
+                slideOut(targetOffset = { IntOffset(-1000, 0) }, animationSpec = tween(duration))
+            },
+            popEnterTransition = {
+                slideIn(initialOffset = { IntOffset(-1000, 0) }, animationSpec = tween(duration))
+            },
+            popExitTransition = {
+                slideOut(targetOffset = { IntOffset(1000, 0) }, animationSpec = tween(duration))
+            }
+        ) {
+            UpdateProductScreen(id = it.arguments?.getInt("id"), navToHome = {
+                navController.navigate(HomeRoutes.Home.name) {
+                    launchSingleTop = true
+                    popUpTo(HomeRoutes.Home.name) {
+                        inclusive = true
+                    }
+                }
+            }) {
                 navController.navigateUp()
             }
         }

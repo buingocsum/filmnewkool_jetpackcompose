@@ -39,12 +39,12 @@ import com.example.appnewkool.ui.theme.WhiteBlue2
 @Composable
 fun SignInScreen(
     viewModel: SignInViewModel? = hiltViewModel(),
-    navToHome: () -> Unit
+    onNavToHome: () -> Unit
 ) {
     val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
-    if (viewModel?.signInResult?.token?.token != null){
-        navToHome.invoke()
+    if (viewModel?.signInResult?.token?.token != null) {
+        onNavToHome.invoke()
     }
 
     Box(
@@ -100,7 +100,7 @@ fun SignInScreen(
 
                     Text(
                         modifier = Modifier.clickable(onClick = {
-                            navToHome.invoke()
+                            onNavToHome.invoke()
                         }),
                         text = "Skip",
                         color = WhiteBlue2,
@@ -109,15 +109,17 @@ fun SignInScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
-                if(viewModel?.isLoading?.value == false){
+                if (viewModel?.isLoading == false) {
                     BtnSignIn(
                         inputUserState.email,
                         inputUserState.passWord,
                         enable = {
-                            inputUserState.emailErrorMessage == null && inputUserState.passwWordErrorMessage == null
+                            inputUserState.email != "" && inputUserState.passWord != "" &&
+                                    inputUserState.emailErrorMessage == null &&
+                                    inputUserState.passwWordErrorMessage == null
                         },
                     ) {
-                        viewModel?.signIn(it)
+                        viewModel.signIn(it)
                     }
                 } else {
                     CircularProgressIndicator(color = Color.White)

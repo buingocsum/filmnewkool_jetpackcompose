@@ -3,7 +3,6 @@ package com.example.appnewkool.ui.login.signin
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appnewkool.data.base.BaseViewModel
 import com.example.appnewkool.data.model.Account
@@ -22,27 +21,12 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
     var signInResult by mutableStateOf<SignInResponse?>(null)
         private set
 
-
-    init {
-        fetchData()
-    }
-
-    override fun fetchData() {
-        isLoading.value = true
-        parentJob = viewModelScope.launch(handler) {
-
-        }
-        registerJobFinish()
-    }
-
     fun signIn(userName: Account) {
-        isLoading.value = true
+        isLoading = true
         parentJob = viewModelScope.launch(handler) {
             signInResult = signInRepository.signIn(userName)
         }
-        parentJob?.invokeOnCompletion {
-            isLoading.value = false
-        }
+        onJobFinish()
     }
 
     fun onEmailInputChange(email: String) {
@@ -74,7 +58,6 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
 data class InputUserState(
     val email: String = "",
     val passWord: String = "",
-    val emailErrorMessage: String? = "",
-    val passwWordErrorMessage: String? = "",
-
+    val emailErrorMessage: String? = null,
+    val passwWordErrorMessage: String? = null,
     )

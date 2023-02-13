@@ -1,7 +1,9 @@
 package com.example.appnewkool.ui.home
 
+import android.util.Log
 import com.example.appnewkool.data.base.network.NetworkResult
 import com.example.appnewkool.data.database.entities.toListProduct
+import com.example.appnewkool.data.database.entities.toListProductEntity
 import com.example.appnewkool.data.model.Product
 import com.example.appnewkool.data.modeljson.toListProduct
 import com.example.appnewkool.data.services.LocalService
@@ -11,29 +13,33 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class HomeRepository @Inject constructor(private val localService: LocalService,
-                                         private val productRemoteService: ProductRemoteService,
-                                         @IoDispatcher private val dispatcher: CoroutineDispatcher)  {
+class HomeRepository @Inject constructor(
+    private val localService: LocalService,
+    private val productRemoteService: ProductRemoteService,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
+) {
     suspend fun getListProduct(): List<Product> = withContext(dispatcher) {
         val saveProduct = localService.getAllProduct()
-        if(saveProduct.isNotEmpty()){
+        if (saveProduct.isNotEmpty()) {
             saveProduct.toListProduct()
         } else {
             getProductAndSaveFromRemote()
         }
     }
+    suspend fun getToken()= withContext(dispatcher){
+        productRemoteService.getSharePreference()
+    }
 
-    suspend fun getProductAndSaveFromRemote() : List<Product>{
+    suspend fun getProductAndSaveFromRemote(): List<Product> {
         var newProductList = listOf<Product>()
-
-        when(val result = productRemoteService.getListProductResponse()){
-            is NetworkResult.Success -> newProductList = result.data.toListProduct()
+        when (val result = productRemoteService.getListProductResponse()) {
+            is NetworkResult.Success -> newProductList = result.data.data.toListProduct()
             is NetworkResult.Error -> throw result.exception
         }
 
-        if(newProductList.isNotEmpty()){
+        if (newProductList.isNotEmpty()) {
             localService.deleteAllProduct()
-//            localService.saveListProduct(newProductList.toListProductEntity())
+            localService.saveListProduct(newProductList.toListProductEntity())
         }
         return newProductList
     }

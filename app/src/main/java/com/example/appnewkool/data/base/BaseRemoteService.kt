@@ -1,5 +1,6 @@
 package com.example.appnewkool.data.base
 
+import android.util.Log
 import com.example.appnewkool.data.base.network.BaseNetworkException
 import com.example.appnewkool.data.base.network.NetworkResult
 import retrofit2.Response

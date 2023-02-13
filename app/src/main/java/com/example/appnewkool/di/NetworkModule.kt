@@ -20,12 +20,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     @Provides
-    fun provideProductApi(@Named("SumbnElementfx") retrofit: Retrofit):ProductApi{
+    fun provideProductApi(@Named("SumbnElementfx") retrofit: Retrofit): ProductApi {
         return retrofit.create(ProductApi::class.java)
     }
 
     @Provides
-    fun provideSignInApi(@Named("SumbnElementfx") retrofit: Retrofit):LoginApi{
+    fun provideSignInApi(@Named("SumbnElementfx") retrofit: Retrofit): LoginApi {
         return retrofit.create(LoginApi::class.java)
     }
 
@@ -49,7 +49,6 @@ class NetworkModule {
         httpLoggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
-
         builder.interceptors().add(httpLoggingInterceptor)
         return builder.build()
     }

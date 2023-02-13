@@ -1,5 +1,7 @@
 package com.example.appnewkool.ui.home
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,13 +12,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -27,21 +29,31 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.appnewkool.R
 import com.example.appnewkool.data.model.Product
+import com.example.appnewkool.ui.theme.BlueCus
 import com.example.appnewkool.ui.theme.BlueWhite
+import com.example.appnewkool.ui.theme.WhiteBlue
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
-    navToDetailSc: ()-> Unit
+    viewModel: HomeViewModel? = hiltViewModel(),
+    navToAddProDuctSc: () -> Unit,
+    navOnBack: () -> Unit,
+    navToDetailProductSc: (Int) -> Unit
 ) {
-
-    val listProduct = viewModel.listProducts.observeAsState(listOf())
-    val list = mutableListOf<String?>()
-    listProduct.value.forEach {
-        list.add(it.hangXe)
+    BackHandler() {
+        navOnBack.invoke()
     }
+
+    val listProduct = viewModel?.listProducts ?: mutableListOf()
+
+    val listHangXe = arrayListOf<String?>()
+    listProduct.forEach {
+        if (it.hangXe != null && it.hangXe != "") listHangXe.add(it.hangXe)
+    }
+    Log.e("Home", "HomeScreen: " + listHangXe.size)
+
     var search by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
@@ -65,13 +77,15 @@ fun HomeScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .padding(horizontal = 10.dp)
-                        )
+                        IconButton(onClick = navOnBack) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_back_ios_24),
+                                contentDescription = "",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .padding(horizontal = 10.dp)
+                            )
+                        }
                         SearchFeature(search) { search = it }
                     }
                     Box() {
@@ -113,17 +127,19 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(6f)
+                    .padding(top = 5.dp)
             ) {
-                Column() {
+                Column {
+
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 7.dp)
                     ) {
-                        items(list.size) {
+                        items(listHangXe.size) {
                             Row() {
                                 Chip(
-                                    onClick = {  },
+                                    onClick = { },
                                     border = BorderStroke(
                                         ChipDefaults.OutlinedBorderSize,
                                         color = Color.Black
@@ -133,27 +149,66 @@ fun HomeScreen(
                                         contentColor = Color.Black
                                     )
                                 ) {
-                                    list.get(it)?.let { it1 -> Text(text = it1) }
+                                    if (listHangXe.get(it) != null) Text(
+                                        text = listHangXe.get(
+                                            it
+                                        )!!
+                                    )
                                 }
                                 Spacer(modifier = Modifier.width(10.dp))
                             }
+
                         }
                     }
-                    LazyVerticalGrid(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 5.dp)
-                            .weight(1f),
-                        columns = GridCells.Fixed(2)
-                    ) {
-                        items(listProduct.value.size) {
-                            listProduct.value.forEach {
-                                ItemInfo(it){
-                                    navToDetailSc.invoke()
+
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (viewModel?.isLoading == true) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = WhiteBlue)
+                            }
+                        } else {
+                            LazyVerticalGrid(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 5.dp),
+                                columns = GridCells.Fixed(2)
+                            ) {
+                                listProduct.size.let {
+                                    items(it) {
+                                        ItemInfo(listProduct.get(it)) {
+                                            listProduct.get(it).id?.let { it1 ->
+                                                navToDetailProductSc.invoke(
+                                                    it1
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+                        if (viewModel?.token != "") {
+                            ExtendedFloatingActionButton(
+                                text = { Text(text = "Thêm mới") },
+                                onClick = navToAddProDuctSc,
+                                icon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
+                                        contentDescription = "",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(20.dp),
+                                backgroundColor = BlueCus,
+                                contentColor = Color.White
+                            )
+                        }
                     }
+
                 }
             }
         }
@@ -161,7 +216,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun SearchFeature(search:String,seachChange:(String)-> Unit) {
+fun SearchFeature(search: String, seachChange: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -206,7 +261,7 @@ fun ItemInfo(
         1, "toyota", "toyota", "90 cm x 90 cm",
         "50 cm x 30 cm", "20 cm x 20 cm", "30 cm x 30 cm", null, null, null, null
     ),
-    changeScreen: ()->Unit
+    changeScreen: () -> Unit
 ) {
     Card(
         modifier = Modifier.padding(start = 5.dp, end = 5.dp, bottom = 10.dp),
@@ -246,11 +301,13 @@ fun ItemInfo(
                 }
         }
     }
+
 }
 
-@Preview
+@Preview(showSystemUi = true)
 @Composable
-fun PreHome(){
-
+fun PreHome() {
+    HomeScreen(null, {}, {}) {
+    }
 }
 
