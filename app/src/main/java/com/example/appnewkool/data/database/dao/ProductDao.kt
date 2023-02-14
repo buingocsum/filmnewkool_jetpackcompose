@@ -26,5 +26,8 @@ interface ProductDao {
     suspend fun insertProduct(vararg productEntity: ProductEntity)
 
     @Query("SELECT * FROM product WHERE hangXe LIKE '%' || :search || '%'")
-    suspend fun sortHangXe(search: String?): List<ProductEntity>
+    fun sortHangXe(search: String?): List<ProductEntity>
+
+    @Query("SELECT * FROM product WHERE LOWER(tenXe) LIKE '%' || LOWER(:query) || '%' OR UPPER(:query) == hangXe")
+    fun searchProductListing(query: String?): List<ProductEntity>
 }

@@ -1,6 +1,5 @@
 package com.example.appnewkool.data.base
 
-import android.util.Log
 import com.example.appnewkool.data.base.network.BaseNetworkException
 import com.example.appnewkool.data.base.network.NetworkResult
 import retrofit2.Response
@@ -25,6 +24,4 @@ open class BaseRemoteService : BaseService() {
             NetworkResult.Error(parseError(response.message(), response.code(), errorBody))
         }
     }
-
-
 }

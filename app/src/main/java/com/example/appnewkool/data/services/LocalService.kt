@@ -1,9 +1,7 @@
 package com.example.appnewkool.data.services
 
-import android.util.Log
 import com.example.appnewkool.data.database.dao.ProductDao
 import com.example.appnewkool.data.database.entities.ProductEntity
-import com.example.appnewkool.data.model.Product
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -22,5 +20,7 @@ class LocalService @Inject constructor(private val productDao: ProductDao) {
     suspend fun insertProduct(productEntity: ProductEntity) =
         productDao.insertProduct(productEntity)
 
-//    suspend fun sortProducts(hangXe:String)= productDao.sortHangXe(hangXe)
+    fun sortProducts(hangXe: String) = flow { emit(productDao.sortHangXe(hangXe)) }
+
+    fun searchProducts(query:String) = flow {emit(productDao.searchProductListing(query))  }
 }

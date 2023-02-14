@@ -42,9 +42,13 @@ class HomeRepository @Inject constructor(
         return newProductList
     }
 
-//    suspend fun sortData(hangXe: String) = flow {
-//        emit(localService.sortProducts(hangXe))
-//    }
+    fun searchData(query: String, event: EventGetData) =
+        when (event) {
+            is EventGetData.Search -> localService.searchProducts(query)
+                .map { it.toListProduct() }.flowOn(dispatcher)
+            is EventGetData.Sort -> localService.sortProducts(query)
+                .map { it.toListProduct() }.flowOn(dispatcher)
+        }
 
 
 }

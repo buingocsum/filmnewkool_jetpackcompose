@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,16 +46,14 @@ fun HomeScreen(
     BackHandler() {
         navOnBack.invoke()
     }
-
-    val listProduct = viewModel?.listProducts ?: mutableListOf()
-
+    val state = viewModel?.state ?: ProductsState()
+    val listProduct = state.listProduct
     val listHangXe = mutableSetOf<String?>()
     listProduct.forEach {
         if (it.hangXe != null && it.hangXe != "") listHangXe.add(it.hangXe)
     }
     Log.e("Home", "HomeScreen: " + listHangXe.size)
 
-    var search by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -77,16 +76,19 @@ fun HomeScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = navOnBack) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_back_ios_24),
-                                contentDescription = "",
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp)
-                            )
+
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .size(30.dp)
+                        )
+                        SearchFeature(state.searchQuery) {
+                            viewModel?.onEvent(
+                                ProductsListingsEvent.OnSearchQueryChange(it))
                         }
-                        SearchFeature(search) { search = it }
                     }
                     Box() {
                         Text(
@@ -141,7 +143,13 @@ fun HomeScreen(
                                 Chip(
                                     onClick = {
                                         listHangXe.elementAt(it)
-                                            ?.let { }
+                                            ?.let {
+                                                viewModel?.onEvent(
+                                                    ProductsListingsEvent.OnSortQueryChange(
+                                                        it
+                                                    )
+                                                )
+                                            }
                                     },
                                     border = BorderStroke(
                                         ChipDefaults.OutlinedBorderSize,
@@ -189,7 +197,7 @@ fun HomeScreen(
                         if (viewModel?.token != "") {
                             ExtendedFloatingActionButton(
                                 text = { Text(text = "Đồng bộ hóa") },
-                                onClick = { viewModel?.refresh() },
+                                onClick = { viewModel?.onEvent(ProductsListingsEvent.Refresh) },
                                 icon = {
                                     Icon(
                                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_autorenew_24),
@@ -227,7 +235,7 @@ fun HomeScreen(
 
 @Composable
 fun SearchFeature(search: String, seachChange: (String) -> Unit) {
-    Row(
+    /* Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(30.dp)),
@@ -260,7 +268,22 @@ fun SearchFeature(search: String, seachChange: (String) -> Unit) {
             )
         }
         Spacer(modifier = Modifier.width(3.dp))
-    }
+    } */
+    OutlinedTextField(
+        value = search,
+        onValueChange = seachChange,
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        placeholder = {
+            Text(text = "Search...")
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            backgroundColor = Color.White
+        ),
+        maxLines = 1,
+        singleLine = true
+    )
 }
 
 

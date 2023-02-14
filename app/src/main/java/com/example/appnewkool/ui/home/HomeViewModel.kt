@@ -5,10 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.appnewkool.data.base.BaseViewModel
-import com.example.appnewkool.data.database.entities.toListProduct
 import com.example.appnewkool.data.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,52 +15,97 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) :
     BaseViewModel() {
-    var listProducts by mutableStateOf<List<Product>>(mutableListOf())
-        private set
+
     var token by mutableStateOf<String?>("")
+
+    var state by mutableStateOf(ProductsState())
 
     init {
         fetchData()
     }
 
-
-
     override fun fetchData() {
         parentJob = viewModelScope.launch(handler) {
             isLoading = true
-            token = homeRepository.getToken()
-//            val products = homeRepository.getListProduct()
-//            if (products.isNotEmpty()) {
-//                listProducts = products
-//            }
-            homeRepository.getListProduct().collect{
-                listProducts = it
+
+            token = async { homeRepository.getToken() }.await()
+
+            homeRepository.getListProduct().collect {
+                state = state.copy(listProduct = it)
             }
         }
         onJobFinish()
     }
 
-    fun execute(products: List<Product>, query: String): List<Product> {
-        if (query.isBlank()) {
-            return products
-        }
-        return products.filter {
-            it.tenXe.trim().lowercase().contains(query.lowercase()) ||
-                    it.hangXe?.trim()?.lowercase()?.contains(query.lowercase()) == true
-        }
-    }
-
-//    fun sortData(hangxe: String) {
-//        homeRepository.sortData(hangxe)
+//    fun execute(products: List<Product>, query: String): List<Product> {
+//        if (query.isBlank()) {
+//            return products
+//        }
+//        return products.filter {
+//            it.tenXe.trim().lowercase().contains(query.lowercase()) ||
+//                    it.hangXe?.trim()?.lowercase()?.contains(query.lowercase()) == true
+//        }
 //    }
 
-    fun refresh() {
-        parentJob = viewModelScope.launch(handler) {
-            val products = homeRepository.getProductAndSaveFromRemote()
-            if (products.isNotEmpty()) {
-                listProducts = products
+
+    fun onEvent(event: ProductsListingsEvent) {
+        when (event) {
+            is ProductsListingsEvent.Refresh -> {
+                parentJob = viewModelScope.launch(handler) {
+                    val products = homeRepository.getProductAndSaveFromRemote()
+                    if (products.isNotEmpty()) {
+                        state = state.copy(products)
+                    }
+                }
+                onJobFinish()
+            }
+            is ProductsListingsEvent.OnSearchQueryChange -> {
+                state = state.copy(searchQuery = event.query)
+                parentJob?.cancel()
+                parentJob = viewModelScope.launch {
+                    getProductList(state.searchQuery.lowercase(), event = EventGetData.Search)
+                }
+                onJobFinish()
+            }
+
+            is ProductsListingsEvent.OnSortQueryChange -> {
+                state = state.copy(sortQuery = event.query)
+                parentJob?.cancel()
+                parentJob = viewModelScope.launch {
+                    getProductList(state.sortQuery.lowercase(), EventGetData.Sort)
+                }
+                onJobFinish()
             }
         }
-        onJobFinish()
     }
+
+    private fun getProductList(
+        query: String,
+        event: EventGetData
+    ) {
+        viewModelScope.launch {
+            homeRepository
+                .searchData(query, event)
+                .collect { state = state.copy(listProduct = it) }
+        }
+    }
+}
+
+
+data class ProductsState(
+    val listProduct: List<Product> = emptyList(),
+    val isRefreshing: Boolean = false,
+    val searchQuery: String = "",
+    val sortQuery: String = ""
+)
+
+sealed class ProductsListingsEvent {
+    object Refresh : ProductsListingsEvent()
+    data class OnSearchQueryChange(val query: String) : ProductsListingsEvent()
+    data class OnSortQueryChange(val query: String) : ProductsListingsEvent()
+}
+
+sealed class EventGetData {
+    object Search : EventGetData()
+    object Sort : EventGetData()
 }
