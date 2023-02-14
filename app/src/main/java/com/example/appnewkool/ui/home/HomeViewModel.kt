@@ -27,9 +27,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     override fun fetchData() {
         parentJob = viewModelScope.launch(handler) {
             isLoading = true
-
-            token = async { homeRepository.getToken() }.await()
-
+            token = homeRepository.getToken()
             homeRepository.getListProduct().collect {
                 state = state.copy(listProduct = it)
             }

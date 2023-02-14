@@ -105,7 +105,7 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 navController.navigate(HomeRoutes.AddProduct.name) {
                     launchSingleTop = true
                 }
-            }, navOnBack = { navController.navigateUp() }) {
+            }) {
                 navController.navigate(HomeRoutes.DetailProduct.name + "?id=$it") {
                     launchSingleTop = true
 

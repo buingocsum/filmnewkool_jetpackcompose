@@ -43,7 +43,8 @@ fun SignInScreen(
 ) {
     val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
-    if (viewModel?.signInResult?.token?.token != null) {
+    val token = viewModel?.signInResult?.token?.token
+    if (token!= null) {
         onNavToHome.invoke()
     }
 

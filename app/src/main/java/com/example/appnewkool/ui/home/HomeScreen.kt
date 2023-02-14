@@ -40,12 +40,9 @@ import com.example.appnewkool.ui.theme.WhiteBlue
 fun HomeScreen(
     viewModel: HomeViewModel? = hiltViewModel(),
     navToAddProDuctSc: () -> Unit,
-    navOnBack: () -> Unit,
     navToDetailProductSc: (Int) -> Unit
 ) {
-    BackHandler() {
-        navOnBack.invoke()
-    }
+
     val state = viewModel?.state ?: ProductsState()
     val listProduct = state.listProduct
     val listHangXe = mutableSetOf<String?>()
@@ -340,7 +337,7 @@ fun ItemInfo(
 @Preview(showSystemUi = true)
 @Composable
 fun PreHome() {
-    HomeScreen(null, {}, {}) {
+    HomeScreen(null, {}) {
     }
 }
 

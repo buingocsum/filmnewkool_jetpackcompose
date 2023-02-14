@@ -12,9 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -23,7 +21,6 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     fun provideProductApi(@Named("SumbnElementfx") retrofit: Retrofit): ProductApi {
-        retrofit.create(ProductApi::class.java)
         return retrofit.create(ProductApi::class.java)
     }
 
@@ -39,7 +36,6 @@ class NetworkModule {
         okHttpClient: OkHttpClient,
         moshiConverterFactory: MoshiConverterFactory
     ): Retrofit {
-
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(moshiConverterFactory)
