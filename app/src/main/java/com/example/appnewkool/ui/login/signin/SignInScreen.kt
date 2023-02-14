@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +45,7 @@ fun SignInScreen(
     val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
     val token = viewModel?.signInResult?.token?.token
-    if (token!= null) {
+    if (token != null) {
         onNavToHome.invoke()
     }
 
@@ -84,8 +85,21 @@ fun SignInScreen(
                     viewModel?.onEmailInputChange(it)
                 }
                 Spacer(modifier = Modifier.height(30.dp))
-                PasswordInput(inputUserState.passWord, inputUserState.passwWordErrorMessage) {
-                    viewModel?.onPasswordInputChange(it)
+                inputUserState.showPassword?.let {
+                    PasswordInput(inputUserState.passWord, inputUserState.passwWordErrorMessage,
+                        it, {
+                            val image = if (inputUserState.showPassword == true)
+                                R.drawable.ic_baseline_visibility_24 else R.drawable.ic_baseline_visibility_off_24
+                            val description =
+                                if (inputUserState.showPassword == true) "Hide password" else "Show password"
+                            IconButton(onClick = {
+                                viewModel?.onClickShowPass()
+                            }) {
+                                Icon(imageVector = ImageVector.vectorResource(id = image), description)
+                            }
+                        }) {
+                        viewModel?.onPasswordInputChange(it)
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -196,7 +210,7 @@ fun EmailInput(email: String, error: String?, onEmailChange: (String) -> Unit) {
                 errorLabelColor = MaterialTheme.colors.error,
                 focusedLabelColor = Color.White,
                 leadingIconColor = Color.White,
-//                errorLeadingIconColor = MaterialTheme.colors.error
+                errorLeadingIconColor = MaterialTheme.colors.error
             ),
             shape = RoundedCornerShape(40.dp),
             leadingIcon = {
@@ -215,7 +229,8 @@ fun EmailInput(email: String, error: String?, onEmailChange: (String) -> Unit) {
                 Text(
                     text = stringResource(id = R.string.email_hint),
                 )
-            }
+            },
+            singleLine = true
         )
         error?.let { IsErrorField(it) }
     }
@@ -223,7 +238,13 @@ fun EmailInput(email: String, error: String?, onEmailChange: (String) -> Unit) {
 }
 
 @Composable
-fun PasswordInput(password: String, error: String?, onPasswordChange: (String) -> Unit) {
+fun PasswordInput(
+    password: String,
+    error: String?,
+    showPass:Boolean,
+    onShowPassword: @Composable (() -> Unit),
+    onPasswordChange: (String) -> Unit
+) {
     Column() {
         OutlinedTextField(
             modifier = Modifier
@@ -240,7 +261,7 @@ fun PasswordInput(password: String, error: String?, onPasswordChange: (String) -
                 errorLabelColor = MaterialTheme.colors.error,
                 focusedLabelColor = Color.White,
                 leadingIconColor = Color.White,
-//                errorLeadingIconColor = MaterialTheme.colors.error
+                errorLeadingIconColor = MaterialTheme.colors.error
             ),
             shape = RoundedCornerShape(40.dp),
             leadingIcon = {
@@ -260,7 +281,9 @@ fun PasswordInput(password: String, error: String?, onPasswordChange: (String) -
                     text = stringResource(id = R.string.password_hint),
                 )
             },
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = if(!showPass)PasswordVisualTransformation() else VisualTransformation.None,
+            singleLine = true,
+            trailingIcon = onShowPassword
         )
         error?.let { IsErrorField(error = it) }
     }

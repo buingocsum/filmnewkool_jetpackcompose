@@ -204,7 +204,8 @@ fun Item(label: String, text: String?, onChangeText: (String) -> Unit) {
             textColor = Color.Black,
             backgroundColor = BlueCus.copy(alpha = 0.2f)
         ),
-        shape = RoundedCornerShape(10.dp)
+        shape = RoundedCornerShape(10.dp),
+        singleLine = true
     )
 }
 

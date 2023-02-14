@@ -47,12 +47,14 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
             inputUserState.copy(passWord = password, passwWordErrorMessage = null)
     }
 
-
+    fun onClickShowPass(){
+        val show = inputUserState.showPassword
+        inputUserState = inputUserState.copy(showPassword = !show!!)
+    }
     private fun isEmailValid(email: String): Boolean {
         val emailRegex = "^(.+)@(.+)\$"
         return Pattern.matches(emailRegex, email)
     }
-
     private fun isPasswordValid(password: String) = password.length >= 6
 }
 
@@ -61,4 +63,5 @@ data class InputUserState(
     val passWord: String = "",
     val emailErrorMessage: String? = null,
     val passwWordErrorMessage: String? = null,
+    val showPassword: Boolean? = false
     )
