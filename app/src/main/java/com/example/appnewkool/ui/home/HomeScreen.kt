@@ -48,7 +48,7 @@ fun HomeScreen(
 
     val listProduct = viewModel?.listProducts ?: mutableListOf()
 
-    val listHangXe = arrayListOf<String?>()
+    val listHangXe = mutableSetOf<String?>()
     listProduct.forEach {
         if (it.hangXe != null && it.hangXe != "") listHangXe.add(it.hangXe)
     }
@@ -139,29 +139,25 @@ fun HomeScreen(
                         items(listHangXe.size) {
                             Row() {
                                 Chip(
-                                    onClick = { },
+                                    onClick = {
+                                        listHangXe.elementAt(it)
+                                            ?.let { }
+                                    },
                                     border = BorderStroke(
                                         ChipDefaults.OutlinedBorderSize,
                                         color = Color.Black
                                     ),
                                     colors = ChipDefaults.chipColors(
                                         backgroundColor = Color.Transparent,
-                                        contentColor = Color.Black
+                                        contentColor = Color.Black,
                                     )
                                 ) {
-                                    if (listHangXe.get(it) != null) Text(
-                                        text = listHangXe.get(
-                                            it
-                                        )!!
-                                    )
+                                    listHangXe.elementAt(it)?.let { it1 -> Text(text = it1) }
                                 }
                                 Spacer(modifier = Modifier.width(10.dp))
                             }
-
                         }
                     }
-
-
                     Box(modifier = Modifier.weight(1f)) {
                         if (viewModel?.isLoading == true) {
                             Box(
@@ -192,6 +188,21 @@ fun HomeScreen(
                         }
                         if (viewModel?.token != "") {
                             ExtendedFloatingActionButton(
+                                text = { Text(text = "Đồng bộ hóa") },
+                                onClick = { viewModel?.refresh() },
+                                icon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_autorenew_24),
+                                        contentDescription = "",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(20.dp),
+                                backgroundColor = BlueCus,
+                                contentColor = Color.White
+                            )
+                            ExtendedFloatingActionButton(
                                 text = { Text(text = "Thêm mới") },
                                 onClick = navToAddProDuctSc,
                                 icon = {
@@ -208,7 +219,6 @@ fun HomeScreen(
                             )
                         }
                     }
-
                 }
             }
         }

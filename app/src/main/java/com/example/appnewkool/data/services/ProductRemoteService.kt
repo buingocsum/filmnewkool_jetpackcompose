@@ -22,6 +22,7 @@ class ProductRemoteService @Inject constructor(private val productApi: ProductAp
     suspend fun getListProductResponse(): NetworkResult<HomeProductResponse> {
         val getToken = appSharePreference.getSharedPreferences()?.getString("token", "")
         val header = mapOf("token" to getToken)
+
         return callApi { productApi.getAllProduct(header) }
     }
 

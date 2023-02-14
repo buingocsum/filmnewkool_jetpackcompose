@@ -5,12 +5,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.appnewkool.data.database.entities.ProductEntity
-import com.example.appnewkool.data.model.Product
+import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface ProductDao {
     @Query("SELECT * FROM product ORDER BY tenXe ASC")
-    suspend fun getAll(): List<ProductEntity>
+    fun getAll(): List<ProductEntity>
 
     @Insert
     suspend fun insertAll(products: List<ProductEntity>)
@@ -23,4 +24,7 @@ interface ProductDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(vararg productEntity: ProductEntity)
+
+    @Query("SELECT * FROM product WHERE hangXe LIKE '%' || :search || '%'")
+    suspend fun sortHangXe(search: String?): List<ProductEntity>
 }

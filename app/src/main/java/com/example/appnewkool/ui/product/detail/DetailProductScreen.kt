@@ -77,14 +77,16 @@ fun DetailProductScreen(
                                     .padding(horizontal = 10.dp)
                             )
                         }
-                        IconButton(onClick = { navToUpdateProduct.invoke(productId) }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Edit,
-                                contentDescription = "",
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp)
-                            )
+                        if (viewModel?.token != "") {
+                            IconButton(onClick = { navToUpdateProduct.invoke(productId) }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Edit,
+                                    contentDescription = "",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .padding(horizontal = 10.dp)
+                                )
+                            }
                         }
 
                     }

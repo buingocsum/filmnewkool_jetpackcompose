@@ -1,6 +1,5 @@
 package com.example.appnewkool.ui.home
 
-import android.util.Log
 import com.example.appnewkool.data.base.network.NetworkResult
 import com.example.appnewkool.data.database.entities.toListProduct
 import com.example.appnewkool.data.database.entities.toListProductEntity
@@ -10,6 +9,8 @@ import com.example.appnewkool.data.services.LocalService
 import com.example.appnewkool.data.services.ProductRemoteService
 import com.example.appnewkool.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -18,17 +19,15 @@ class HomeRepository @Inject constructor(
     private val productRemoteService: ProductRemoteService,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
-    suspend fun getListProduct(): List<Product> = withContext(dispatcher) {
-        val saveProduct = localService.getAllProduct()
-        if (saveProduct.isNotEmpty()) {
-            saveProduct.toListProduct()
+    fun getListProduct() = localService.getAllProduct().map {
+        if (it.isNotEmpty()) {
+            it.toListProduct()
         } else {
             getProductAndSaveFromRemote()
         }
-    }
-    suspend fun getToken()= withContext(dispatcher){
-        productRemoteService.getSharePreference()
-    }
+    }.flowOn(dispatcher)
+
+    suspend fun getToken() = withContext(dispatcher) { productRemoteService.getSharePreference() }
 
     suspend fun getProductAndSaveFromRemote(): List<Product> {
         var newProductList = listOf<Product>()
@@ -36,12 +35,16 @@ class HomeRepository @Inject constructor(
             is NetworkResult.Success -> newProductList = result.data.data.toListProduct()
             is NetworkResult.Error -> throw result.exception
         }
-
         if (newProductList.isNotEmpty()) {
             localService.deleteAllProduct()
             localService.saveListProduct(newProductList.toListProductEntity())
         }
         return newProductList
     }
+
+//    suspend fun sortData(hangXe: String) = flow {
+//        emit(localService.sortProducts(hangXe))
+//    }
+
 
 }

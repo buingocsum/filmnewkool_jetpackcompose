@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppNewkoolTheme() {
-                AnimatedApp()
+                Test()
                 // Comment out AnimatedApp above and uncomment NonAmimatedApp below for the
                 // status quo of how navigation is handled
                 // NonAnimatedApp()

@@ -5,6 +5,7 @@ import com.example.appnewkool.common.AppSharePreference
 import com.example.appnewkool.common.Utils
 import com.example.appnewkool.data.base.network.NetworkResult
 import com.example.appnewkool.data.model.Account
+import com.example.appnewkool.data.modeljson.SignInResponse
 import com.example.appnewkool.data.services.SignInService
 import com.example.appnewkool.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -31,4 +32,5 @@ class SignInRepository @Inject constructor(
             }
         }
     }
+
 }

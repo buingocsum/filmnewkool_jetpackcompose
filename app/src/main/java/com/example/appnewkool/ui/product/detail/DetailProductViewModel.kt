@@ -13,6 +13,18 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailProductViewModel @Inject constructor(private val detailProductRepository: DetailProductRepository) :
     BaseViewModel() {
+    var token by mutableStateOf<String?>("")
+
+    init {
+        fetchData()
+    }
+
+    override fun fetchData() {
+        parentJob = viewModelScope.launch(handler) {
+            token = detailProductRepository.getToken()
+        }
+    }
+
     var product by mutableStateOf<Product?>(null)
         private set
 
@@ -20,9 +32,7 @@ class DetailProductViewModel @Inject constructor(private val detailProductReposi
         parentJob = viewModelScope.launch(handler) {
             isLoading = true
             val item = detailProductRepository.getProduct(idProduct)
-            if (item != null) {
-                product = item
-            }
+            product = item
         }
         onJobFinish()
     }

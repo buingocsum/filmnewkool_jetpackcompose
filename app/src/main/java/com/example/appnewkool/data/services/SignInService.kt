@@ -7,6 +7,8 @@ import com.example.appnewkool.data.model.Account
 import com.example.appnewkool.data.modeljson.SignInResponse
 import javax.inject.Inject
 
+import kotlin.math.log
+
 class SignInService @Inject constructor(private val loginApi: LoginApi) : BaseRemoteService() {
     suspend fun signInAccount(userName: Account): NetworkResult<SignInResponse> {
         return callApi { loginApi.signIn(userName) }
