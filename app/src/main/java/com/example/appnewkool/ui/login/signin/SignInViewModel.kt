@@ -33,7 +33,7 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
     fun onEmailInputChange(email: String) {
         if (!isEmailValid(email)) {
             inputUserState =
-                inputUserState.copy(email = email, emailErrorMessage = "Email $email không hợp lệ")
+                inputUserState.copy(email = email, emailErrorMessage = "$email không phải định dạng email")
         } else inputUserState = inputUserState.copy(email = email, emailErrorMessage = null)
     }
 
@@ -41,7 +41,7 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
         if (!isPasswordValid(password)) {
             inputUserState = inputUserState.copy(
                 passWord = password,
-                passwWordErrorMessage = "Password không hợp lệ"
+                passwWordErrorMessage = "Password không đủ ký tự"
             )
         } else inputUserState =
             inputUserState.copy(passWord = password, passwWordErrorMessage = null)

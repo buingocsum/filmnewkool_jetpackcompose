@@ -50,7 +50,7 @@ fun Navigation(navController: NavHostController = rememberAnimatedNavController(
     }
 }
 
-const val duration = 1300
+const val duration = 800
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.loginGraph(navController: NavHostController) {

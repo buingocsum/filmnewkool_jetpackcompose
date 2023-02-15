@@ -1,5 +1,6 @@
 package com.example.appnewkool.ui.product.edit
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -38,6 +40,7 @@ fun UpdateProductScreen(
     navToHome: () -> Unit,
     navOnBack: (() -> Unit)
 ) {
+    val context = LocalContext.current
     val product = viewModel?.product ?: Product(
         null, "", null, null, null,
         null, null, null, null, null, null
@@ -46,9 +49,20 @@ fun UpdateProductScreen(
         navOnBack.invoke()
     }
 
-    LaunchedEffect(viewModel?.isLaunched == false) {
-        viewModel?.getProduct(id!!)
+    if(viewModel?.isLaunched == false){
+        LaunchedEffect(viewModel.isLaunched) {
+            viewModel.getProduct(id!!)
+        }
     }
+
+
+    if(viewModel?.isSuccess != ""){
+        LaunchedEffect(viewModel?.isSuccess) {
+            navToHome.invoke()
+            Toast.makeText(context, viewModel?.isSuccess, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Box(modifier = Modifier.background(color = Color.White)) {
         Column(
             modifier = Modifier
@@ -127,18 +141,16 @@ fun UpdateProductScreen(
                     }
                 }
             }
-            Box() {
+            Box(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Card(
                     modifier = Modifier
-                        .padding(top = 30.dp, start = 30.dp, end = 30.dp)
-                        .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
+                        .padding(top = 30.dp, start = 30.dp, end = 30.dp),
                     shape = RoundedCornerShape(30.dp),
                     elevation = 20.dp,
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
                             .padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
@@ -159,35 +171,36 @@ fun UpdateProductScreen(
                         Item("Nóc", product.noc) { viewModel?.onChangeTextNoc(it) }
                     }
                 }
-                if (viewModel?.isLoading == true) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = Color.Transparent)
-                            .clickable { false },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = WhiteBlue)
-                    }
 
-                } else {
-                    ExtendedFloatingActionButton(
-                        text = { Text(text = "Save") },
-                        onClick = { viewModel?.updateProduct(id!!, product) },
-                        icon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
-                                contentDescription = "",
-                            )
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(20.dp),
-                        backgroundColor = BlueCus,
-                        contentColor = Color.White
-                    )
-                }
             }
+        }
+        if (viewModel?.isLoading == true) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Transparent)
+                    .clickable { false },
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                CircularProgressIndicator(color = WhiteBlue)
+            }
+
+        } else {
+            ExtendedFloatingActionButton(
+                text = { Text(text = "Save") },
+                onClick = { viewModel?.updateProduct(id!!, product) },
+                icon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
+                        contentDescription = "",
+                    )
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(20.dp),
+                backgroundColor = BlueCus,
+                contentColor = Color.White
+            )
         }
     }
 }

@@ -26,6 +26,6 @@ interface ProductApi {
     suspend fun updateProduct(
         @Path("id") id: Int,
         @HeaderMap headers: Map<String, String?>,
-        product: ProductRemote
+        @Body product: ProductRemote
     ): Response<AddUpdateProductRespose>
 }

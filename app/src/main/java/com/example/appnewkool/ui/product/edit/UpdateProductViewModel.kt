@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UpdateProductViewModel @Inject constructor(private val updateProductRepository: UpdateProductRepository) :
     BaseViewModel() {
-    var isSuccess by mutableStateOf(false)
+    var isSuccess by mutableStateOf("")
 
     var product by mutableStateOf(
         Product(
@@ -63,7 +63,10 @@ class UpdateProductViewModel @Inject constructor(private val updateProductReposi
 
     fun updateProduct(id: Int, product: Product) {
         parentJob = viewModelScope.launch {
-            updateProductRepository.updateProductRemote(id, product)
+           val result = updateProductRepository.updateProductRemote(id, product)
+            if(result.code == "200"){
+                isSuccess = result.message.toString()
+            }
         }
         onJobFinish()
     }
@@ -73,6 +76,7 @@ class UpdateProductViewModel @Inject constructor(private val updateProductReposi
             isLoading = true
             val item = updateProductRepository.getProduct(idProduct)
                 product = item
+            isLaunched = true
         }
         onJobFinish()
     }

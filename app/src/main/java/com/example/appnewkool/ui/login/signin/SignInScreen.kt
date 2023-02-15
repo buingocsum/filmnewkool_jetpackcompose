@@ -1,5 +1,7 @@
 package com.example.appnewkool.ui.login.signin
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,12 +13,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -42,11 +46,15 @@ fun SignInScreen(
     viewModel: SignInViewModel? = hiltViewModel(),
     onNavToHome: () -> Unit
 ) {
+    val context = LocalContext.current
     val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
-    val token = viewModel?.signInResult?.token?.token
-    if (token != null) {
-        onNavToHome.invoke()
+    if(viewModel?.signInResult?.token?.token != null){
+        LaunchedEffect(viewModel?.signInResult?.token?.token) {
+            Log.e("sign in", "SignInScreen: " + viewModel?.signInResult?.token?.token)
+            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+            onNavToHome.invoke()
+        }
     }
 
     Box(
@@ -95,7 +103,10 @@ fun SignInScreen(
                             IconButton(onClick = {
                                 viewModel?.onClickShowPass()
                             }) {
-                                Icon(imageVector = ImageVector.vectorResource(id = image), description)
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = image),
+                                    description
+                                )
                             }
                         }) {
                         viewModel?.onPasswordInputChange(it)
@@ -124,28 +135,36 @@ fun SignInScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
-                if (viewModel?.isLoading == false) {
-                    BtnSignIn(
-                        inputUserState.email,
-                        inputUserState.passWord,
-                        enable = {
-                            inputUserState.email != "" && inputUserState.passWord != "" &&
-                                    inputUserState.emailErrorMessage == null &&
-                                    inputUserState.passwWordErrorMessage == null
-                        },
-                    ) {
-                        viewModel.signIn(it)
-                    }
-                } else {
-                    CircularProgressIndicator(color = Color.White)
+
+                BtnSignIn(
+                    inputUserState.email,
+                    inputUserState.passWord,
+                    enable = {
+                        inputUserState.email != "" && inputUserState.passWord != "" &&
+                                inputUserState.emailErrorMessage == null &&
+                                inputUserState.passwWordErrorMessage == null
+                    },
+                ) {
+                    viewModel?.signIn(it)
                 }
+
 
                 Spacer(modifier = Modifier.weight(1f))
             }
 
             Spacer(modifier = Modifier.weight(1f))
         }
-
+        if(viewModel?.isLoading == true){
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Transparent)
+                    .clickable { false },
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = WhiteBlue)
+            }
+        }
     }
 }
 
@@ -241,7 +260,7 @@ fun EmailInput(email: String, error: String?, onEmailChange: (String) -> Unit) {
 fun PasswordInput(
     password: String,
     error: String?,
-    showPass:Boolean,
+    showPass: Boolean,
     onShowPassword: @Composable (() -> Unit),
     onPasswordChange: (String) -> Unit
 ) {
@@ -281,7 +300,7 @@ fun PasswordInput(
                     text = stringResource(id = R.string.password_hint),
                 )
             },
-            visualTransformation = if(!showPass)PasswordVisualTransformation() else VisualTransformation.None,
+            visualTransformation = if (!showPass) PasswordVisualTransformation() else VisualTransformation.None,
             singleLine = true,
             trailingIcon = onShowPassword
         )

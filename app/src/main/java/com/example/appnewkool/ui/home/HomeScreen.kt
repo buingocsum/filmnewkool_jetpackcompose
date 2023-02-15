@@ -232,40 +232,7 @@ fun HomeScreen(
 
 @Composable
 fun SearchFeature(search: String, seachChange: (String) -> Unit) {
-    /* Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White, shape = RoundedCornerShape(30.dp)),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextField(
-            value = search,
-            onValueChange = seachChange,
-            modifier = Modifier
-                .weight(1f),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Black,
-                backgroundColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                placeholderColor = Color.Gray
-            ),
-            placeholder = {
-                Text(
-                    text = "Search",
-                )
-            }
-        )
-        IconButton(onClick = { }) {
-            Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = "",
-                tint = BlueWhite,
-                modifier = Modifier.background(color = Color.Transparent)
-            )
-        }
-        Spacer(modifier = Modifier.width(3.dp))
-    } */
+
     OutlinedTextField(
         value = search,
         onValueChange = seachChange,

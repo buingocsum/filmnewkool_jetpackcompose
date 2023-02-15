@@ -20,7 +20,8 @@ class UpdateProductRepository @Inject constructor(
 ) {
     suspend fun updateProductRemote(id: Int, product: Product) = withContext(dispatcher) {
         when (val result = productRemoteService.updateProductRemote(id, product.toProductRemote())) {
-            is NetworkResult.Success -> updateProductLocal(result.data.data.toProduct())
+            is NetworkResult.Success -> {updateProductLocal(result.data.data.toProduct())
+            result.data}
             is NetworkResult.Error -> throw result.exception
         }
     }
