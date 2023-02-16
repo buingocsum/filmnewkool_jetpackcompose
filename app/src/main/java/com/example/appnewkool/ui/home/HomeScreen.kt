@@ -137,15 +137,6 @@ fun HomeScreen(
                     ) {
                         items(listHangXe.size) {
                             Row() {
-                                Chip(onClick = {
-                                    viewModel?.onEvent(
-                                        ProductsListingsEvent.OnSearchQueryChange(
-                                            ""
-                                        )
-                                    )
-                                }) {
-                                    Text(text = "All")
-                                }
                                 Chip(
                                     onClick = {
                                         viewModel?.onEvent(
