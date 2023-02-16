@@ -50,8 +50,8 @@ fun SignInScreen(
     val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
     if(viewModel?.signInResult?.token?.token != null){
-        LaunchedEffect(viewModel?.signInResult?.token?.token) {
-            Log.e("sign in", "SignInScreen: " + viewModel?.signInResult?.token?.token)
+        LaunchedEffect(viewModel.signInResult?.token?.token) {
+            Log.e("sign in", "SignInScreen: " + viewModel.signInResult?.token?.token)
             Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
             onNavToHome.invoke()
         }
@@ -67,11 +67,6 @@ fun SignInScreen(
             )
             .padding(10.dp)
     ) {
-        DrawArc(
-            Modifier
-                .absoluteOffset(x = -65.dp, y = -320.dp)
-                .size(400.dp)
-        )
         Row {
             Spacer(modifier = Modifier.weight(1f))
 
@@ -160,28 +155,14 @@ fun SignInScreen(
                     .fillMaxSize()
                     .background(color = Color.Transparent)
                     .clickable { false },
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.BottomCenter
             ) {
-                CircularProgressIndicator(color = WhiteBlue)
+                CircularProgressIndicator(color = Color.White)
             }
         }
     }
 }
 
-
-@Composable
-fun DrawArc(modifier: Modifier) {
-    Canvas(modifier) {
-        val brush = Brush.verticalGradient(listOf(Color.White, Color.Blue, Color.Blue, Color.Black))
-        drawArc(
-            brush = brush,
-            startAngle = 0f,
-            sweepAngle = 180f,
-            useCenter = true,
-            size = Size(500.dp.toPx(), 500.dp.toPx())
-        )
-    }
-}
 
 @Composable
 fun BtnSignIn(

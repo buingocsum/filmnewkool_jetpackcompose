@@ -84,7 +84,8 @@ fun HomeScreen(
                         )
                         SearchFeature(state.searchQuery) {
                             viewModel?.onEvent(
-                                ProductsListingsEvent.OnSearchQueryChange(it))
+                                ProductsListingsEvent.OnSearchQueryChange(it)
+                            )
                         }
                     }
                     Box() {
@@ -139,6 +140,22 @@ fun HomeScreen(
                             Row() {
                                 Chip(
                                     onClick = {
+                                        viewModel?.onEvent(
+                                            ProductsListingsEvent.OnSearchQueryChange("")
+                                        )
+                                    }, border = BorderStroke(
+                                        ChipDefaults.OutlinedBorderSize,
+                                        color = Color.Black
+                                    ),
+                                    colors = ChipDefaults.chipColors(
+                                        backgroundColor = Color.Transparent,
+                                        contentColor = Color.Black,
+                                    )
+                                ) {
+                                    Text(text = "All")
+                                }
+                                Chip(
+                                    onClick = {
                                         listHangXe.elementAt(it)
                                             ?.let {
                                                 viewModel?.onEvent(
@@ -155,7 +172,7 @@ fun HomeScreen(
                                     colors = ChipDefaults.chipColors(
                                         backgroundColor = Color.Transparent,
                                         contentColor = Color.Black,
-                                    )
+                                    ),
                                 ) {
                                     listHangXe.elementAt(it)?.let { it1 -> Text(text = it1) }
                                 }
@@ -250,14 +267,9 @@ fun SearchFeature(search: String, seachChange: (String) -> Unit) {
     )
 }
 
-
 @Composable
 fun ItemInfo(
-    product: Product
-    = Product(
-        1, "toyota", "toyota", "90 cm x 90 cm",
-        "50 cm x 30 cm", "20 cm x 20 cm", "30 cm x 30 cm", null, null, null, null
-    ),
+    product: Product,
     changeScreen: () -> Unit
 ) {
     Card(
@@ -279,22 +291,37 @@ fun ItemInfo(
                 fontSize = 20.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
-            if (product.kinhLai != null) Row() {
+            if (product.kinhLai != null) Column() {
                 Text(text = "Kính lái", color = Color.White)
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(text = product.kinhLai, color = Color.White)
+                Text(
+                    text = product.kinhLai,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             if (product.suonTruoc != null)
-                Row() {
+                Column() {
                     Text(text = "Sườn trước", color = Color.White)
                     Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = product.suonTruoc, color = Color.White)
+                    Text(
+                        text = product.suonTruoc,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             if (product.suonSau != null)
-                Row() {
+                Column() {
                     Text(text = "Sườn sau", color = Color.White)
                     Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = product.suonSau, color = Color.White)
+                    Text(
+                        text = product.suonSau,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
         }
     }
