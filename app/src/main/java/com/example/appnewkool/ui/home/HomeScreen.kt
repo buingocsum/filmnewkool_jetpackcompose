@@ -73,7 +73,6 @@ fun HomeScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "",
@@ -84,7 +83,8 @@ fun HomeScreen(
                         )
                         SearchFeature(state.searchQuery) {
                             viewModel?.onEvent(
-                                ProductsListingsEvent.OnSearchQueryChange(it))
+                                ProductsListingsEvent.OnSearchQueryChange(it)
+                            )
                         }
                     }
                     Box() {
@@ -137,6 +137,15 @@ fun HomeScreen(
                     ) {
                         items(listHangXe.size) {
                             Row() {
+                                Chip(onClick = {
+                                    viewModel?.onEvent(
+                                        ProductsListingsEvent.OnSearchQueryChange(
+                                            ""
+                                        )
+                                    )
+                                }) {
+                                    Text(text = "All")
+                                }
                                 Chip(
                                     onClick = {
                                         listHangXe.elementAt(it)

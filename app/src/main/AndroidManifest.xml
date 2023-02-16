@@ -31,10 +31,7 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name="com.example.test.MainActivity"
-            android:exported="true">
-        </activity>
+
     </application>
 
 </manifest>
