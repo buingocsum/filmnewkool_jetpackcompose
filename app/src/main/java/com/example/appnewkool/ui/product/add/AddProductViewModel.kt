@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddProductViewModel @Inject constructor(private val addProductRepository: AddProductRepository) :
     BaseViewModel() {
-    var isSuccess by mutableStateOf("")
+    var isSuccess by mutableStateOf(false)
 
     var product by mutableStateOf(
         Product(null, "", null, null, null, null,
@@ -57,12 +57,19 @@ class AddProductViewModel @Inject constructor(private val addProductRepository: 
     }
 
     fun createUser(){
+        toast = null
         isLoading = true
         parentJob = viewModelScope.launch(handler) {
-            val response = addProductRepository.createProduct(product)
-            if (response.code == "200"){
-                isSuccess = response.message.toString()
+            try {
+                val response = addProductRepository.createProduct(product)
+                if (response.code == "200"){
+                    isSuccess = true
+                    toast = response.message.toString()
+                }
+            } catch (e: Exception){
+                toast = "có lỗi xảy ra"
             }
+
         }
         onJobFinish()
     }

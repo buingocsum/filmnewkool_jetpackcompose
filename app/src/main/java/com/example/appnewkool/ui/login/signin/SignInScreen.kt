@@ -46,14 +46,20 @@ fun SignInScreen(
     viewModel: SignInViewModel? = hiltViewModel(),
     onNavToHome: () -> Unit
 ) {
-    val context = LocalContext.current
+
     val inputUserState = viewModel?.inputUserState ?: InputUserState()
 
     if(viewModel?.signInResult?.token?.token != null){
-        LaunchedEffect(viewModel?.signInResult?.token?.token) {
-            Log.e("sign in", "SignInScreen: " + viewModel?.signInResult?.token?.token)
-            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+        LaunchedEffect(viewModel.signInResult?.token?.token) {
+            Log.e("sign in", "SignInScreen: " + viewModel.signInResult?.token?.token)
             onNavToHome.invoke()
+        }
+    }
+
+    if(viewModel?.toast != null){
+        val context = LocalContext.current
+        LaunchedEffect(viewModel?.toast ){
+            Toast.makeText(context, viewModel?.toast, Toast.LENGTH_SHORT).show()
         }
     }
 

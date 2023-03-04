@@ -24,8 +24,17 @@ class SignInViewModel @Inject constructor(private val signInRepository: SignInRe
 
     fun signIn(userName: Account) {
         isLoading = true
+        toast = null
         parentJob = viewModelScope.launch(handler) {
-            signInResult = signInRepository.signIn(userName)
+            try {
+                signInResult = signInRepository.signIn(userName)
+            }catch (e:java.lang.Exception){
+                toast = "Đăng nhập không thành công"
+            }
+
+            if (signInResult!!.token.token.isNotEmpty() ){
+                toast = "Đăng nhập thành công"
+            }
         }
         onJobFinish()
     }

@@ -1,5 +1,6 @@
 package com.example.appnewkool.ui.home
 
+import android.util.Log
 import com.example.appnewkool.data.base.network.NetworkResult
 import com.example.appnewkool.data.database.entities.toListProduct
 import com.example.appnewkool.data.database.entities.toListProductEntity
@@ -9,10 +10,12 @@ import com.example.appnewkool.data.services.LocalService
 import com.example.appnewkool.data.services.ProductRemoteService
 import com.example.appnewkool.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.log
 
 class HomeRepository @Inject constructor(
     private val localService: LocalService,

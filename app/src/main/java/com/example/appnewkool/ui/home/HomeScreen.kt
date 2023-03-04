@@ -1,6 +1,8 @@
 package com.example.appnewkool.ui.home
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -49,7 +53,13 @@ fun HomeScreen(
     listProduct.forEach {
         if (it.hangXe != null && it.hangXe != "") listHangXe.add(it.hangXe)
     }
-    Log.e("Home", "HomeScreen: " + listHangXe.size)
+
+    if(viewModel?.toast != null){
+        val context = LocalContext.current
+        LaunchedEffect(viewModel.toast) {
+            Toast.makeText(context, viewModel.toast, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -135,48 +145,52 @@ fun HomeScreen(
                             .fillMaxWidth()
                             .padding(start = 7.dp)
                     ) {
-                        items(listHangXe.size) {
-                            Row() {
-                                Chip(
-                                    onClick = {
-                                        viewModel?.onEvent(
-                                            ProductsListingsEvent.OnSearchQueryChange("")
-                                        )
-                                    }, border = BorderStroke(
-                                        ChipDefaults.OutlinedBorderSize,
-                                        color = Color.Black
-                                    ),
-                                    colors = ChipDefaults.chipColors(
-                                        backgroundColor = Color.Transparent,
-                                        contentColor = Color.Black,
+                        item {
+                            Chip(
+                                onClick = {
+                                    viewModel?.onEvent(
+                                        ProductsListingsEvent.OnSearchQueryChange("")
                                     )
-                                ) {
-                                    Text(text = "All")
-                                }
-                                Chip(
-                                    onClick = {
-                                        listHangXe.elementAt(it)
-                                            ?.let {
-                                                viewModel?.onEvent(
-                                                    ProductsListingsEvent.OnSortQueryChange(
-                                                        it
-                                                    )
-                                                )
-                                            }
-                                    },
-                                    border = BorderStroke(
-                                        ChipDefaults.OutlinedBorderSize,
-                                        color = Color.Black
-                                    ),
-                                    colors = ChipDefaults.chipColors(
-                                        backgroundColor = Color.Transparent,
-                                        contentColor = Color.Black,
-                                    ),
-                                ) {
-                                    listHangXe.elementAt(it)?.let { it1 -> Text(text = it1) }
-                                }
-                                Spacer(modifier = Modifier.width(10.dp))
+                                }, border = BorderStroke(
+                                    ChipDefaults.OutlinedBorderSize,
+                                    color = Color.Black
+                                ),
+                                colors = ChipDefaults.chipColors(
+                                    backgroundColor = Color.Transparent,
+                                    contentColor = Color.Black,
+                                )
+                            ) {
+                                Text(text = "All")
                             }
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                        items(listHangXe.size) {
+
+
+                            Chip(
+                                onClick = {
+                                    listHangXe.elementAt(it)
+                                        ?.let {
+                                            viewModel?.onEvent(
+                                                ProductsListingsEvent.OnSortQueryChange(
+                                                    it
+                                                )
+                                            )
+                                        }
+                                },
+                                border = BorderStroke(
+                                    ChipDefaults.OutlinedBorderSize,
+                                    color = Color.Black
+                                ),
+                                colors = ChipDefaults.chipColors(
+                                    backgroundColor = Color.Transparent,
+                                    contentColor = Color.Black,
+                                ),
+                            ) {
+                                listHangXe.elementAt(it)?.let { it1 -> Text(text = it1) }
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+
                         }
                     }
                     Box(modifier = Modifier.weight(1f)) {

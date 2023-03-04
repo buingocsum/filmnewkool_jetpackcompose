@@ -21,6 +21,9 @@ open class BaseViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         protected set
 
+    var toast by mutableStateOf<String?>(null)
+        protected set
+
 //    var onNavigateToPage = MutableLiveData<Event<Int>>()
 //        protected set
 //
@@ -41,7 +44,7 @@ open class BaseViewModel : ViewModel() {
     }
 
 
-    protected fun onJobFinish(vararg doSomeThing:(()->Unit) ) {
+    protected fun onJobFinish(vararg doSomeThing: (() -> Unit)) {
         parentJob?.invokeOnCompletion {
             doSomeThing.forEach {
                 it.invoke()
@@ -61,7 +64,6 @@ open class BaseViewModel : ViewModel() {
     protected fun showNotify(messageId: Int) {
 //        notifyMessageResourceId.postValue(Event(messageId))
     }
-
 
 
     protected fun showLoading(isShow: Boolean) {

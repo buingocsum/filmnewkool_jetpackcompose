@@ -20,6 +20,8 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     var state by mutableStateOf(ProductsState())
 
+
+
     init {
         fetchData()
     }
@@ -50,12 +52,16 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         when (event) {
             is ProductsListingsEvent.Refresh -> {
                 parentJob = viewModelScope.launch(handler) {
+                    toast = null
                     val products = homeRepository.getProductAndSaveFromRemote()
                     if (products.isNotEmpty()) {
-                        state = state.copy(products)
+                        homeRepository.getListProduct().collect {
+                            state = state.copy(listProduct = it)
+                        }
                     }
+
                 }
-                onJobFinish()
+                onJobFinish({toast = "dữ liệu đã được đồng bộ"})
             }
             is ProductsListingsEvent.OnSearchQueryChange -> {
                 state = state.copy(searchQuery = event.query)

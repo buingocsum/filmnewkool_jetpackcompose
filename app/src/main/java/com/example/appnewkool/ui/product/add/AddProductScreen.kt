@@ -42,7 +42,6 @@ fun AddProductScreen(
     navToHome: () -> Unit,
     navOnBack: () -> Unit
 ) {
-    val context = LocalContext.current
     val product = viewModel?.product ?: Product(
         null, "", null, null, null,
         null, null, null, null, null, null
@@ -50,11 +49,16 @@ fun AddProductScreen(
     BackHandler() {
         navOnBack.invoke()
     }
+    if (viewModel?.toast != null) {
+        val context = LocalContext.current
+        LaunchedEffect(viewModel.toast) {
+            Toast.makeText(context, viewModel.toast, Toast.LENGTH_SHORT).show()
+        }
+    }
 
-    if(viewModel?.isSuccess != ""){
-        LaunchedEffect(viewModel?.isSuccess) {
-                navToHome.invoke()
-                Toast.makeText(context, viewModel?.isSuccess, Toast.LENGTH_SHORT).show()
+    if (viewModel?.isSuccess == true) {
+        LaunchedEffect(viewModel.isSuccess) {
+            navToHome.invoke()
         }
     }
 
