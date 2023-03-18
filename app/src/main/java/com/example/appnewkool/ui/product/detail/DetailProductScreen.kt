@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
@@ -125,58 +126,62 @@ fun DetailProductScreen(
                     }
                 }
             }
-            Card(
-                modifier = Modifier
-                    .padding(30.dp)
-                    .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
-                shape = RoundedCornerShape(30.dp),
-                elevation = 20.dp,
-            ) {
-                Column(
+            Box(modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())) {
+                Card(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(30.dp),
+                    shape = RoundedCornerShape(30.dp),
+                    elevation = 20.dp,
                 ) {
-                    if (product != null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (product != null) {
 
-                        Text(
-                            text = product.tenXe,
-                            color = Color.Black,
-                            fontSize = 40.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                        Spacer(modifier = Modifier.height(3.dp))
-                        product.hangXe?.let { Text(text = it, fontSize = 20.sp) }
-                        Spacer(modifier = Modifier.height(10.dp))
-                        product.kinhLai?.let {
-                            ItemDetail(name = "Kính lái", value = it)
-                        }
-                        product.suonTruoc?.let {
-                            ItemDetail(name = "Sườn trước", value = it)
-                        }
+                            Text(
+                                text = product.tenXe,
+                                color = Color.Black,
+                                fontSize = 40.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            product.hangXe?.let { Text(text = it, fontSize = 20.sp) }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            product.kinhLai?.let {
+                                ItemDetail(name = "Kính lái", value = it)
+                            }
+                            product.suonTruoc?.let {
+                                ItemDetail(name = "Sườn trước", value = it)
+                            }
 
-                        product.suonSau?.let {
-                            ItemDetail(name = "Sườn sau", value = it)
-                        }
+                            product.suonSau?.let {
+                                ItemDetail(name = "Sườn sau", value = it)
+                            }
 
-                        product.khoangSau?.let {
-                            ItemDetail(name = "Khoang sau", value = it)
-                        }
-                        product.kinhHau?.let {
-                            ItemDetail(name = "Kính hậu", value = it)
-                        }
+                            product.khoangSau?.let {
+                                ItemDetail(name = "Khoang sau", value = it)
+                            }
+                            product.kinhHau?.let {
+                                ItemDetail(name = "Kính hậu", value = it)
+                            }
 
-                        product.tamGiac?.let {
-                            ItemDetail(name = "Tam giác", value = it)
-                        }
-                        product.noc?.let {
-                            ItemDetail(name = "Nóc", value = it)
-                        }
+                            product.tamGiac?.let {
+                                ItemDetail(name = "Tam giác", value = it)
+                            }
+                            product.noc?.let {
+                                ItemDetail(name = "Nóc", value = it)
+                            }
 
+                        }
                     }
                 }
+
             }
+
         }
     }
 }

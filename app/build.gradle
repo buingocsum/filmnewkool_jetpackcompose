@@ -17,7 +17,7 @@ apikey.load(new FileInputStream(file))
         applicationId 'com.sumbui.appnewkool'
         minSdk 21
         targetSdk 33
-        versionCode 2
+        versionCode 4
         versionName '1.1'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -51,7 +51,7 @@ apikey.load(new FileInputStream(file))
         compose true
     }
     composeOptions {
-
+        kotlinCompilerExtensionVersion = "1.4.3"
         kotlinCompilerVersion '1.5.10'
     }
     packagingOptions {
@@ -67,7 +67,7 @@ apikey.load(new FileInputStream(file))
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.0'
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
@@ -80,7 +80,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
     //implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0'
 
     //navigation
     def nav_version = "2.5.3"
@@ -129,6 +129,7 @@ dependencies {
     //livedata
     implementation "androidx.compose.runtime:runtime-livedata:1.3.3"
 
+    implementation 'androidx.work:work-runtime-ktx:2.8.0'
 
 }
 kapt {
