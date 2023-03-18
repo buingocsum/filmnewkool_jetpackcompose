@@ -1,5 +1,8 @@
 package com.example.appnewkool
 
+import android.app.PendingIntent
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -21,6 +24,7 @@ class MainActivity : ComponentActivity() {
     lateinit var appSharePreference: AppSharePreference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AppNewkoolTheme {
                 // A surface container using the 'background' color from the theme

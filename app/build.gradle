@@ -51,7 +51,7 @@ apikey.load(new FileInputStream(file))
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+
         kotlinCompilerVersion '1.5.10'
     }
     packagingOptions {
